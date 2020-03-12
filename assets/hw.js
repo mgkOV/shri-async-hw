@@ -1,4 +1,5 @@
-const solveQuadraticEquation = (a, b, c, cb) => {
+const solveQuadraticEquationCb = (a, b, c, cb) => {
+  const { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
   // Находим дискриминант
   multiply(b, b, _b2 => {
     multiply(4, a, _4a => {

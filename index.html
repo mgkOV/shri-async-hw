@@ -4,9 +4,113 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ДЗ "Асинхронность"</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/themes/prism.min.css"
+      integrity="sha256-cuvic28gVvjQIo3Q4hnRpQSNB0aMw3C+kjkR0i+hrWg="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/plugins/line-numbers/prism-line-numbers.min.css"
+      integrity="sha256-Afz2ZJtXw+OuaPX10lZHY7fN1+FuTE/KdCs+j7WZTGc="
+      crossorigin="anonymous"
+    />
+    <style>
+      .content {
+        max-width: 1024px;
+        margin: 0 auto;
+      }
+    </style>
   </head>
   <body>
+    <div class="content">
+      <h1>Решение кватратного уравнения</h1>
+      <div class="content__version">
+        <h2>CallBack Hell version</h2>
+        <pre class="line-numbers  language-javascript">
+          <code class="language-javascript">
+            const solveQuadraticEquationCb = (a, b, c, cb) => {
+              const { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
+              // Находим дискриминант
+              multiply(b, b, _b2 => {
+                multiply(4, a, _4a => {
+                  multiply(_4a, c, _4ac => {
+                    subtract(_b2, _4ac, D => {
+                      less(D, 0, isLessThenZero => {
+                        if (isLessThenZero) {
+                          //Дискриминант меньше нуля
+                          return cb(NaN, NaN);
+                        }
+            
+                        //Дискриминант больше или равен нулю
+                        equal(D, 0, isEqualToZero => {
+                          multiply(-1, b, _minusB => {
+                            multiply(2, a, _2a => {
+                              //Дискриминант равен нулю
+                              if (isEqualToZero) {
+                                return divide(_minusB, _2a, roots => {
+                                  cb(roots, roots);
+                                });
+                              }
+            
+                              //Дискриминант больше нуля
+                              sqrt(D, _rootOfD => {
+                                add(_minusB, _rootOfD, _sum => {
+                                  subtract(_minusB, _rootOfD, _difference => {
+                                    //Первый корень
+                                    divide(_sum, _2a, root1 => {
+                                      //Второй корень
+                                      divide(_difference, _2a, root2 => {
+                                        cb(root1, root2);
+                                      });
+                                    });
+                                  });
+                                });
+                              });
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                });
+              });
+            };
+            
+          </code>
+        </pre>
+      </div>
+
+      <div class="content__version">
+        <h2>CallBack Named version</h2>
+        <pre class="line-numbers  language-javascript">
+          <code class="language-javascript">
+
+          </code> 
+        </pre>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/prism.min.js"
+      integrity="sha256-YZQM6/hLBZYkb01VYf17isoQM4qpaOP+aX96hhYrWhg="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.19.0/plugins/line-numbers/prism-line-numbers.min.js"
+      integrity="sha256-hep5s8952MqR7Y79JYfCXZD6vQjVHs7sOu/ZGrs1OEQ="
+      crossorigin="anonymous"
+    ></script>
     <script src="assets/api.js"></script>
     <script src="assets/hw.js"></script>
+    <script>
+      console.log("Решаем квадратное уравнение x^2 + x -6 = 0 ...");
+      solveQuadraticEquationCb(1, 1, -6, (root1, root2) => {
+        console.log("**************");
+        console.log("Корни квадратного уравнения x^2 + x -6 = 0:");
+        console.log(`X1 = ${root1}`);
+        console.log(`X2 = ${root2}`);
+      });
+    </script>
   </body>
 </html>
