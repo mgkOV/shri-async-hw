@@ -39,39 +39,38 @@
         <h2>1. CallBack Hell version</h2>
         <pre class="line-numbers  language-javascript">
           <code class="language-javascript">const solveQuadraticEquationCb = (a, b, c, cb) => {
-              const { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
-              // Находим дискриминант
-              multiply(b, b, _b2 => {
-                multiply(4, a, _4a => {
-                  multiply(_4a, c, _4ac => {
-                    subtract(_b2, _4ac, D => {
-                      less(D, 0, isLessThenZero => {
-                        if (isLessThenZero) {
-                          //Дискриминант меньше нуля
-                          return cb(NaN, NaN);
-                        }
-            
-                        //Дискриминант больше или равен нулю
-                        equal(D, 0, isEqualToZero => {
-                          multiply(-1, b, _minusB => {
-                            multiply(2, a, _2a => {
-                              //Дискриминант равен нулю
-                              if (isEqualToZero) {
-                                return divide(_minusB, _2a, roots => {
-                                  cb(roots, roots);
-                                });
-                              }
-            
-                              //Дискриминант больше нуля
-                              sqrt(D, _rootOfD => {
-                                add(_minusB, _rootOfD, _sum => {
-                                  subtract(_minusB, _rootOfD, _difference => {
-                                    //Первый корень
-                                    divide(_sum, _2a, root1 => {
-                                      //Второй корень
-                                      divide(_difference, _2a, root2 => {
-                                        cb(root1, root2);
-                                      });
+            const { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
+            // Находим дискриминант
+            multiply(b, b, _b2 => {
+              multiply(4, a, _4a => {
+                multiply(_4a, c, _4ac => {
+                  subtract(_b2, _4ac, D => {
+                    less(D, 0, isLessThenZero => {
+                      if (isLessThenZero) {
+                        //Дискриминант меньше нуля
+                        return cb(NaN, NaN);
+                      }
+          
+                      //Дискриминант больше или равен нулю
+                      equal(D, 0, isEqualToZero => {
+                        multiply(-1, b, _minusB => {
+                          multiply(2, a, _2a => {
+                            //Дискриминант равен нулю
+                            if (isEqualToZero) {
+                              return divide(_minusB, _2a, roots => {
+                                cb(roots, roots);
+                              });
+                            }
+          
+                            //Дискриминант больше нуля
+                            sqrt(D, _rootOfD => {
+                              add(_minusB, _rootOfD, _sum => {
+                                subtract(_minusB, _rootOfD, _difference => {
+                                  //Первый корень
+                                  divide(_sum, _2a, root1 => {
+                                    //Второй корень
+                                    divide(_difference, _2a, root2 => {
+                                      cb(root1, root2);
                                     });
                                   });
                                 });
@@ -84,7 +83,8 @@
                   });
                 });
               });
-            };</code>
+            });
+          };</code>
         </pre>
       </div>
 
@@ -162,9 +162,60 @@
       </div>
 
       <div class="content__version">
-        <h2>2. Async/await version</h2>
+        <h2>3. Async/await version</h2>
         <pre class="line-numbers  language-javascript">
-          <code class="language-javascript"></code> 
+          <code class="language-javascript">const solveQuadraticEquationA = (a, b, c, cb) => {
+            let { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
+          
+            const promisify = fn => (...args) =>
+              new Promise(resolve => {
+                fn.call(null, ...args, resolve);
+              });
+          
+            add = promisify(add);
+            multiply = promisify(multiply);
+            subtract = promisify(subtract);
+            less = promisify(less);
+            equal = promisify(equal);
+            divide = promisify(divide);
+            sqrt = promisify(sqrt);
+          
+            (async () => {
+              try {
+                // Находим дискриминант
+                const _b2 = await multiply(b, b);
+                const _4a = await multiply(4, a);
+                const _4ac = await multiply(_4a, c);
+                const D = await subtract(_b2, _4ac);
+                const isLessThenZero = await less(D, 0);
+          
+                //Дискриминант меньше нуля
+                if (isLessThenZero) {
+                  return cb(NaN, NaN);
+                }
+          
+                const _minusB = await multiply(-1, b);
+                const _2a = await multiply(2, a);
+                const isEqualToZero = await equal(D, 0);
+          
+                //Дискриминант равен нулю
+                if (isEqualToZero) {
+                  const roots = await divide(_minusB, _2a);
+                  return cb(roots, roots);
+                }
+          
+                const _sqrOfD = await sqrt(D);
+                const sum = await add(_minusB, _sqrOfD);
+                const root1 = await divide(sum, _2a);
+                const difference = await subtract(_minusB, _sqrOfD);
+                const root2 = await divide(difference, _2a);
+                //Дискриминант больше нуля
+                cb(root1, root2);
+              } catch (error) {
+                console.log(error);
+              }
+            })();
+          };</code> 
         </pre>
       </div>
     </div>
@@ -181,13 +232,39 @@
     <script src="assets/api.js"></script>
     <script src="assets/hw.js"></script>
     <script>
-      console.log("Решаем квадратное уравнение x^2 + x -6 = 0 ...");
+      console.log("Решаем квадратное уравнение x^2 + x - 6 = 0 (callback ver.)...");
       solveQuadraticEquationCb(1, 1, -6, (root1, root2) => {
         console.log("**************");
-        console.log("Корни квадратного уравнения x^2 + x -6 = 0:");
+        console.log("(callback ver.)");
+        console.log("Корни квадратного уравнения x^2 + x - 6 = 0:");
         console.log(`X1 = ${root1}`);
         console.log(`X2 = ${root2}`);
+        console.log("**************");
+        console.log("\n");
       });
+
+      console.log("Решаем квадратное уравнение x^2 - 4 = 0 (Promise ver.)...");
+      solveQuadraticEquationP(1, 0, -4, (root1, root2) => {
+        console.log("**************");
+        console.log("(Promise ver.)");
+        console.log("Корни квадратного уравнения x^2 - 4 = 0:");
+        console.log(`X1 = ${root1}`);
+        console.log(`X2 = ${root2}`);
+        console.log("**************");
+        console.log("\n");
+      });
+
+      console.log("Решаем квадратное уравнение 2x^2 + 4x - 2 = 0 (async/awiat ver.)...");
+      solveQuadraticEquationP(2, 4, 2, (root1, root2) => {
+        console.log("**************");
+        console.log("(async/awiat ver.)");
+        console.log("Корни квадратного уравнения 2x^2 + 4x - 2 = 0:");
+        console.log(`X1 = ${root1}`);
+        console.log(`X2 = ${root2}`);
+        console.log("**************");
+        console.log("\n");
+      });
+      console.log("\n");
     </script>
   </body>
 </html>
