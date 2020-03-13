@@ -16,7 +16,15 @@
       integrity="sha256-Afz2ZJtXw+OuaPX10lZHY7fN1+FuTE/KdCs+j7WZTGc="
       crossorigin="anonymous"
     />
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap&subset=cyrillic"
+      rel="stylesheet"
+    />
     <style>
+      body {
+        font-family: "Roboto", sans-serif;
+      }
+
       .content {
         max-width: 1024px;
         margin: 0 auto;
@@ -27,10 +35,9 @@
     <div class="content">
       <h1>Решение кватратного уравнения</h1>
       <div class="content__version">
-        <h2>CallBack Hell version</h2>
+        <h2>1. CallBack Hell version</h2>
         <pre class="line-numbers  language-javascript">
-          <code class="language-javascript">
-            const solveQuadraticEquationCb = (a, b, c, cb) => {
+          <code class="language-javascript">const solveQuadraticEquationCb = (a, b, c, cb) => {
               const { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
               // Находим дискриминант
               multiply(b, b, _b2 => {
@@ -76,18 +83,87 @@
                   });
                 });
               });
-            };
-            
-          </code>
+            };</code>
         </pre>
       </div>
 
       <div class="content__version">
-        <h2>CallBack Named version</h2>
+        <h2>2. Promise version</h2>
         <pre class="line-numbers  language-javascript">
-          <code class="language-javascript">
+          <code class="language-javascript">const solveQuadraticEquationP = (a, b, c, cb) => {
+            let { add, multiply, subtract, less, equal, divide, sqrt } = window.Homework;
+          
+            const promisify = fn => (...args) =>
+              new Promise(resolve => {
+                fn.call(null, ...args, resolve);
+              });
+          
+            add = promisify(add);
+            multiply = promisify(multiply);
+            subtract = promisify(subtract);
+            less = promisify(less);
+            equal = promisify(equal);
+            divide = promisify(divide);
+            sqrt = promisify(sqrt);
+          
+            const values = {};
+          
+            // Находим дискриминант
+            multiply(b, b)
+              .then(_b2 => (values._b2 = _b2))
+              .then(() => multiply(4, a))
+              .then(_4a => multiply(_4a, c))
+              .then(_4ac => subtract(values._b2, _4ac))
+              .then(D => (values.D = D))
+              .then(() => less(values.D, 0))
+              //Дискриминант меньше нуля
+              .then(isLessThenZero => {
+                if (isLessThenZero) {
+                  cb(NaN, NaN);
+                  return Promise.reject({ type: "canceled" });
+                }
+              })
+              //Дискриминант больше или равен нулю
+              .then(() => multiply(-1, b))
+              .then(_minusB => (values._minusB = _minusB))
+              .then(() => multiply(2, a))
+              .then(_2a => (values._2a = _2a))
+              .then(() => equal(values.D, 0))
+              .then(isEqualToZero => {
+                if (isEqualToZero) {
+                  return divide(values._minusB, values._2a);
+                }
+              })
+              //Дискриминант равен нулю
+              .then(roots => {
+                if (roots === undefined) return;
+                cb(roots, roots);
+                return Promise.reject({ type: "canceled" });
+              })
+              // Дискриминант больше нуля
+              .then(() => sqrt(values.D))
+              .then(_sqrOfD => (values._sqrOfD = _sqrOfD))
+              .then(() => add(values._minusB, values._sqrOfD))
+              .then(sum => divide(sum, values._2a))
+              .then(root1 => (values.root1 = root1))
+              .then(() => subtract(values._minusB, values._sqrOfD))
+              .then(difference => divide(difference, values._2a))
+              .then(root2 => {
+                cb(values.root1, root2);
+              })
+              .catch(err => {
+                if (err.type !== "canceled") {
+                  console.log(err);
+                }
+              });
+          };</code> 
+        </pre>
+      </div>
 
-          </code> 
+      <div class="content__version">
+        <h2>2. Async/await version</h2>
+        <pre class="line-numbers  language-javascript">
+          <code class="language-javascript"></code> 
         </pre>
       </div>
     </div>
